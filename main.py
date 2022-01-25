@@ -20,7 +20,7 @@ from Models.Sigmoidal.LIF_R_ASC_soft import LIF_R_ASC_soft
 from Models.Sigmoidal.LIF_R_soft import LIF_R_soft
 from Models.Sigmoidal.LIF_R_soft_weights_only import LIF_R_soft_weights_only
 from Models.microGIF import microGIF
-from TargetModels import TargetModels, TargetModelsSoft, TargetModelMicroGIF
+from TargetModels import TargetModelMicroGIF, TargetModelsBestEffort
 from eval import LossFn
 
 
@@ -43,22 +43,15 @@ def main(argv):
     # bin_size = int(interval_size/10)  # for RPH
     bin_size = 100  # ms
     burn_in = False
-    # burn_in = True
-    # loss_fn = 'frd'
     loss_fn = 'vrd'
     # loss_fn = None
     # silent_penalty_factor = 10.0
     silent_penalty_factor = None
 
 
-    # optimiser = 'Adam'
-    optimiser = 'SGD'
-    # optimiser = 'RMSprop'
+    optimiser = 'Adam'  # SGD, RMSProp
     initial_poisson_rate = 10.  # Hz
-    # network_size = 2
-    # network_size = 4
     network_size = 8
-    # network_size = 16
 
     evaluate_step = 10
     data_path = None
@@ -163,15 +156,15 @@ def main(argv):
             if exp_type_str in [C.ExperimentType.Synthetic.name, C.ExperimentType.SanityCheck.name]:
                 for f_i in range(3, 3+num_targets):
 
-                    if m_class.__name__ in [GLIF_soft.__name__, GLIF_soft_lower_dim.__name__]:
+                    if m_class.__name__ in [GLIF.__name__]:
                         target_model_name = 'glif_soft_ensembles_model_dales_compliant_seed_{}'.format(f_i)
-                        target_model = TargetModelsSoft.glif_soft_continuous_ensembles_model_dales_compliant(random_seed=f_i, pop_size=pop_size, N_pops=N_pops)
+                        target_model = TargetModelsBestEffort.glif(random_seed=f_i, N=pop_size*N_pops)
                     elif m_class.__name__ in [LIF.__name__]:
                         target_model_name = 'lif_pop_model_{}'.format(f_i)
-                        target_model = TargetModelsSoft.lif_pop_model(random_seed=f_i, pop_size=pop_size, N_pops=N_pops)
+                        target_model = TargetModelsBestEffort.lif(random_seed=f_i, N=pop_size*N_pops)
                     elif m_class.__name__ in [microGIF.__name__]:
                         target_model_name = 'micro_gif_populations_model_{}'.format(f_i)
-                        target_model = TargetModelMicroGIF.micro_gif_populations_model(random_seed=f_i, pop_size=pop_size, N_pops=N_pops)
+                        target_model = TargetModelMicroGIF.meso_gif_populations_model(random_seed=f_i, pop_size=pop_size, N_pops=N_pops)
 
                     else:
                         raise NotImplementedError()

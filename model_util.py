@@ -26,9 +26,9 @@ def feed_inputs_sequentially_return_args(model, inputs):
 
 def feed_inputs_sequentially_return_spike_train(model, inputs):
     print('Feeding {} inputs sequentially through SNN in time'.format(inputs.shape[0]))
-    model_spiketrain = model(inputs[0])
+    _, model_spiketrain = model(inputs[0])
     for x_in in inputs[1:]:
-        spikes = model(x_in)
+        _, spikes = model(x_in)
         model_spiketrain = torch.vstack([model_spiketrain, spikes])
 
     return model_spiketrain
